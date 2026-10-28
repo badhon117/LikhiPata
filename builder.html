@@ -141,10 +141,10 @@
     <div class="formula-input-row" id="formulaVars"></div>
 
     <!-- ফর্মুলা ডিসপ্লে -->
-    <div class="formula-display empty" id="formulaDisplay">এখানে ফর্মুলা দেখাবে...</div>
+    
 
     <!-- অপারেটর বাটন -->
-            <div class="formula-input-row" id="formulaOps">
+                    <div class="formula-input-row" id="formulaOps">
           <button class="formula-op-btn" onclick="addFormulaToken('(')">(</button>
           <button class="formula-op-btn" onclick="addFormulaToken(')')">)</button>
           <button class="formula-op-btn" onclick="addFormulaToken(',')" style="font-weight: 900;">,</button>
@@ -152,11 +152,22 @@
           <button class="formula-op-btn" onclick="addFormulaToken('-')">−</button>
           <button class="formula-op-btn" onclick="addFormulaToken('*')">×</button>
           <button class="formula-op-btn" onclick="addFormulaToken('/')">÷</button>
+          <button class="formula-op-btn" onclick="addFormulaToken('%')" style="font-weight: 900;">%</button>
           <!-- 👇 ব্যাকস্পেস: একবারে ১টি টোকেন মুছবে -->
           <button class="formula-op-btn" onclick="removeLastFormulaToken()" style="color:#DC2626;" title="শেষটি মুছুন">⌫</button>
           <!-- 👇 সব মুছার জন্য আলাদা বাটন -->
           <button class="formula-op-btn" onclick="clearFormula()" style="color:#DC2626; font-size: 11px; width: auto; padding: 0 8px;" title="সব মুছুন">C</button>
         </div>
+
+        <!-- 👇 contenteditable ডিসপ্লে (সরাসরি টাইপ করা যাবে) -->
+        <div 
+          class="formula-display empty" 
+          id="formulaDisplay" 
+          contenteditable="true"
+          spellcheck="false"
+          inputmode="text"
+          oninput="handleDisplayInput(event)"
+        >এখানে ফর্মুলা দেখাবে...</div>
 
     <!-- প্রিভিউ -->
     <div class="formula-preview" id="formulaPreview" style="display:none;"></div>
