@@ -1,0 +1,642 @@
+/* ============================================================
+   আমার খাতা — View Styles (Premium)
+   ============================================================ */
+
+/* ============ Premium Tabs ============ */
+.view-tabs {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 5px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.03);
+  display: flex;
+  gap: 4px;
+}
+.view-tab {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  color: var(--text-muted);
+  background: transparent;
+}
+.view-tab.active {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+
+/* ============ Form Tab ============ */
+.form-field-group { margin-bottom: 16px; }
+.form-field-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.form-field-group label .req { color: #DC2626; }
+.form-field-group label .opt {
+  color: #94A3B8;
+  font-weight: 500;
+  font-size: 11.5px;
+}
+.form-field-group label .formula-badge {
+  display: inline-block;
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 5px;
+  letter-spacing: 0.3px;
+}
+
+.form-field-group input[type="text"],
+.form-field-group input[type="number"],
+.form-field-group input[type="date"],
+.form-field-group select,
+.form-field-group textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font-main);
+  color: var(--text-main);
+  background: #F8FAFC;
+  transition: all 0.2s ease;
+}
+.form-field-group input:focus,
+.form-field-group select:focus,
+.form-field-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+  background: white;
+}
+
+.form-field-group input[readonly],
+.form-field-group .formula-field {
+  background: #FEF3C7 !important;
+  border-color: #FDE68A !important;
+  color: #92400E !important;
+  font-weight: 700;
+  cursor: not-allowed;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.checkbox-field input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: var(--primary-light);
+  flex-shrink: 0;
+}
+.checkbox-field span {
+  font-size: 14px;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* ============ Math Wrapper ============ */
+.math-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.math-wrapper input { padding-right: 48px !important; }
+.math-eq-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary-gradient);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: 0.2s;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+  z-index: 2;
+}
+.math-eq-btn:hover { opacity: 0.9; transform: translateY(-50%) scale(1.05); }
+
+/* ============ No Fields State ============ */
+.no-fields-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #94A3B8;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.no-fields-state .icon {
+  font-size: 56px;
+  margin-bottom: 14px;
+  opacity: 0.5;
+}
+.no-fields-state h3 {
+  color: var(--text-muted);
+  font-size: 17px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.no-fields-state p {
+  font-size: 13.5px;
+  max-width: 300px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+.no-fields-state button {
+  padding: 12px 24px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ============ Table Tab ============ */
+.table-toolbar {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.03);
+  margin-bottom: 12px;
+}
+.table-search {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-main);
+  background: #F8FAFC;
+  margin-bottom: 10px;
+}
+.table-search:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+  background: white;
+}
+
+.table-toolbar-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.table-tool-btn {
+  flex: 1;
+  min-width: 90px;
+  padding: 10px 12px;
+  background: #F1F5F9;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-main);
+  transition: 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.table-tool-btn:hover { background: #E2E8F0; }
+.table-tool-btn.active {
+  background: rgba(59,130,246,0.1);
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+.table-tool-btn.export {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+  color: #047857;
+}
+.table-tool-btn.select {
+  background: #FEF3C7;
+  border-color: #FDE68A;
+  color: #92400E;
+}
+
+/* ============ Selection Bar ============ */
+.selection-bar {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-md);
+}
+.selection-bar.open { display: flex; }
+.selection-bar .count { flex: 1; font-size: 13.5px; font-weight: 600; }
+.selection-bar button {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+.selection-bar button.danger { background: #DC2626; }
+
+/* ============ Table ============ */
+.view-table-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid #E2E8F0;
+}
+.view-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.view-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+.view-table thead { background: #F8FAFC; }
+.view-table th {
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid #E2E8F0;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background: #F8FAFC;
+  z-index: 1;
+}
+.view-table th.formula-th { color: #92400E; background: #FEF3C7; }
+.view-table td {
+  padding: 12px 10px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  border-bottom: 1px solid #E2E8F0;
+  white-space: nowrap;
+}
+.view-table td.formula-td { background: #FEF9E7; color: #92400E; font-weight: 700; }
+.view-table tbody tr { cursor: pointer; transition: 0.12s; }
+.view-table tbody tr:hover { background: #F8FAFC; }
+.view-table tbody tr:active { background: rgba(59,130,246,0.05); }
+.view-table tbody tr:last-child td { border-bottom: none; }
+
+.view-table td.checkbox-td { text-align: center; padding: 12px 6px; }
+.view-table td.checkbox-td input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--primary-light);
+}
+
+.table-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94A3B8;
+}
+.table-empty .icon { font-size: 42px; margin-bottom: 10px; opacity: 0.4; }
+.table-empty p { font-size: 13.5px; }
+
+/* ============ Premium Summary Cards ============ */
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.summary-chip {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  color: white;
+  text-align: left;
+  box-shadow: var(--shadow-md);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.summary-chip:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.summary-chip::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.summary-chip .lbl { font-size: 12px; opacity: 0.9; margin-bottom: 6px; font-weight: 500; }
+.summary-chip .val { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+
+/* ============ Export Sheet ============ */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.6);
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sheet-overlay.open { display: block; opacity: 1; }
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: 700px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 1001;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+.bottom-sheet.open { transform: translateX(-50%) translateY(0); }
+.sheet-drag {
+  width: 40px;
+  height: 5px;
+  background: #CBD5E1;
+  border-radius: 5px;
+  margin: 12px auto;
+}
+.sheet-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+.sheet-options { display: flex; gap: 12px; padding: 0 20px; }
+.sheet-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 10px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  background: #F8FAFC;
+  cursor: pointer;
+  font-family: inherit;
+  transition: 0.2s;
+}
+.sheet-btn:hover { background: #F1F5F9; border-color: #CBD5E1; }
+.sheet-btn .icon { font-size: 24px; }
+.sheet-btn .text { font-size: 13px; font-weight: 700; color: var(--text-main); }
+.sheet-cancel {
+  display: block;
+  width: calc(100% - 40px);
+  margin: 16px 20px 20px;
+  padding: 14px;
+  background: #F1F5F9;
+  color: var(--text-muted);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ============ Filter Panel ============ */
+.filter-panel {
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-top: 10px;
+  display: none;
+}
+.filter-panel.open { display: block; }
+.filter-panel label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.filter-panel select,
+.filter-panel input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  margin-bottom: 10px;
+}
+.filter-panel select:last-child,
+.filter-panel input:last-child { margin-bottom: 0; }
+
+/* ============ Print Header ============ */
+.print-header { display: none; }
+
+@media print {
+  .header, .view-tabs, .table-toolbar, .selection-bar, .sheet-overlay, 
+  .bottom-sheet, .modal-overlay, .toast, .btn-row, .summary-strip { display: none !important; }
+  body { background: white !important; }
+  .app { max-width: 100% !important; }
+  .view-table th, .view-table td {
+    border: 1px solid #000 !important;
+    padding: 6px !important;
+    font-size: 11px !important;
+    color: #000 !important;
+  }
+  .view-table thead { display: table-header-group; }
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #000;
+  }
+  .print-header h1 { font-size: 22px; color: #000; margin-bottom: 4px; }
+  .print-header p { font-size: 12px; color: #555; }
+}
+
+/* ============ Dark Mode Overrides ============ */
+body.dark-mode .view-tabs, body.dark-mode .table-toolbar, body.dark-mode .view-table-card,
+body.dark-mode .no-fields-state, body.dark-mode .bottom-sheet {
+  background: var(--bg-card);
+  border-color: #334155;
+}
+body.dark-mode .view-tab { color: var(--text-muted); }
+body.dark-mode .form-field-group label { color: var(--text-muted); }
+body.dark-mode .form-field-group input, body.dark-mode .form-field-group select,
+body.dark-mode .form-field-group textarea, body.dark-mode .checkbox-field,
+body.dark-mode .table-search, body.dark-mode .filter-panel select,
+body.dark-mode .filter-panel input {
+  background: #0F172A;
+  color: var(--text-main);
+  border-color: #475569;
+}
+body.dark-mode .checkbox-field span { color: var(--text-main); }
+body.dark-mode .form-field-group .formula-field {
+  background: #422006 !important;
+  color: #FCD34D !important;
+  border-color: #92400E !important;
+}
+body.dark-mode .table-tool-btn {
+  background: #0F172A;
+  border-color: #334155;
+  color: #CBD5E1;
+}
+body.dark-mode .table-tool-btn:hover { background: #334155; }
+body.dark-mode .view-table thead, body.dark-mode .view-table th {
+  background: #0F172A;
+  color: var(--text-main);
+  border-color: #334155;
+}
+body.dark-mode .view-table td { color: var(--text-main); border-color: #334155; }
+body.dark-mode .view-table tbody tr:hover { background: #334155; }
+body.dark-mode .view-table th.formula-th { background: #422006; color: #FCD34D; }
+body.dark-mode .view-table td.formula-td { background: #422006; color: #FCD34D; }
+body.dark-mode .no-fields-state h3 { color: var(--text-main); }
+body.dark-mode .sheet-btn { background: #0F172A; border-color: #334155; }
+body.dark-mode .sheet-btn:hover { background: #334155; }
+body.dark-mode .sheet-btn .text { color: var(--text-main); }
+body.dark-mode .sheet-cancel { background: #334155; color: #CBD5E1; }
+body.dark-mode .sheet-title { color: var(--text-main); }
+
+/* AMOLED Overrides */
+body.amoled-mode .view-tabs, body.amoled-mode .table-toolbar, body.amoled-mode .view-table-card,
+body.amoled-mode .no-fields-state, body.amoled-mode .bottom-sheet {
+  background: var(--bg-card);
+  border-color: #333333;
+}
+body.amoled-mode .form-field-group label { color: var(--text-muted); }
+body.amoled-mode .form-field-group input, body.amoled-mode .form-field-group select,
+body.amoled-mode .form-field-group textarea, body.amoled-mode .checkbox-field,
+body.amoled-mode .table-search {
+  background: #000000;
+  color: #FFFFFF;
+  border-color: #444444;
+}
+body.amoled-mode .checkbox-field span { color: var(--text-main); }
+body.amoled-mode .view-table thead, body.amoled-mode .view-table th {
+  background: #000000;
+  color: #FFFFFF;
+  border-color: #333333;
+}
+body.amoled-mode .view-table td { color: var(--text-muted); border-color: #333333; }
+body.amoled-mode .view-table tbody tr:hover { background: #222222; }
+body.amoled-mode .table-tool-btn { background: #111111; border-color: #333333; color: var(--text-main); }
+body.amoled-mode .sheet-btn { background: #111111; border-color: #333333; }
+body.amoled-mode .sheet-btn .text { color: var(--text-main); }
+
+/* Responsive */
+@media (max-width: 400px) {
+  .view-tab { padding: 10px; font-size: 13px; }
+  .table-tool-btn { font-size: 12px; padding: 9px 8px; min-width: 70px; }
+}
+/* ============ Floating Action Button (FAB) for View Page ============ */
+.fab-add-entry {
+  position: fixed;
+  bottom: 24px;
+  right: calc(50% - 340px);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 95;
+  transition: 0.2s ease;
+  font-family: inherit;
+}
+
+.fab-add-entry:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.5);
+}
+
+.fab-add-entry:active { 
+  transform: scale(0.95); 
+}
+
+/* Hide the button on mobile view when in form tab? 
+   Actually, we only want it in Table (Statistics) view. Let's hide it on Form tab. */
+
+
+@media (max-width: 720px) {
+  .fab-add-entry { right: 20px; }
+}
+
+/* Adjust fab position to not overlap with bottom elements if any */
+
+/* ============ Table Row Action Buttons ============ */
+.view-table td.action-td {
+  text-align: center;
+  padding: 8px 6px;
+  width: 50px;
+}
+.row-action-btn {
+  background: rgba(59,130,246,0.1);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.15s;
+}
+.row-action-btn:hover {
+  background: rgba(59,130,246,0.2);
+  transform: scale(1.05);
+}
+body.dark-mode .row-action-btn { background: rgba(59,130,246,0.2); }
+body.amoled-mode .row-action-btn { background: rgba(59,130,246,0.3); }

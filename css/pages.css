@@ -1,0 +1,226 @@
+/* ============================================================
+   আমার খাতা — Pages Styles (About, Feedback, Credits, Changelog)
+   ============================================================ */
+
+.page-header {
+  text-align: center;
+  padding: 32px 20px 24px;
+}
+.page-logo {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 16px;
+  border-radius: 22px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.10);
+  border: 1px solid var(--border-subtle);
+}
+.page-header h1 {
+  font-size: 24px;
+  color: var(--primary);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.page-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+.version-badge {
+  display: inline-block;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.page-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+  border: 1px solid var(--border-subtle);
+}
+.page-card h3 {
+  font-size: 16px;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-card p {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.75;
+}
+.page-card ul {
+  padding-left: 22px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 2;
+}
+.page-card ul li::marker {
+  color: var(--primary-light);
+}
+.page-card code {
+  background: var(--primary-soft);
+  padding: 2px 7px;
+  border-radius: 5px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.thank-you {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  padding: 24px 20px;
+  font-style: italic;
+}
+
+/* ============ Feedback Form ============ */
+.feedback-form .form-group { margin-bottom: 16px; }
+.feedback-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-subtle);
+  color: var(--text-main);
+  transition: var(--transition-base);
+}
+.feedback-form input:focus,
+.feedback-form select:focus,
+.feedback-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+  background: white;
+}
+.feedback-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.feedback-form .btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--transition-base);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+}
+.feedback-form .btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+}
+
+/* ============ Credits ============ */
+.credit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.credit-item:last-child { border-bottom: none; }
+.credit-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: var(--bg-subtle);
+}
+.credit-info h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+.credit-info p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ============ Changelog ============ */
+.changelog-version {
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+.changelog-version:last-child { border-bottom: none; }
+.changelog-version h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.changelog-version .changelog-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.changelog-version ul {
+  padding-left: 20px;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: #475569;
+}
+
+/* Dark mode overrides */
+body.dark-mode .page-card p,
+body.dark-mode .page-card ul,
+body.dark-mode .page-card li { color: #CBD5E1; }
+body.dark-mode .feedback-form input,
+body.dark-mode .feedback-form textarea,
+body.dark-mode .feedback-form select {
+  background: #0F172A;
+  color: #F1F5F9;
+  border-color: #475569;
+}
+body.dark-mode .changelog-version ul { color: #CBD5E1; }
+body.amoled-mode .page-card p,
+body.amoled-mode .page-card ul { color: #DDDDDD; }
+body.amoled-mode .feedback-form input,
+body.amoled-mode .feedback-form textarea,
+body.amoled-mode .feedback-form select {
+  background: #000000;
+  color: #FFFFFF;
+  border-color: #444;
+}
