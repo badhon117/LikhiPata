@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ফিডব্যাক — আমার খাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <h1>💬 ফিডব্যাক</h1>
+  </div>
+  <div class="screen">
+    <div class="page-header">
+      <div class="page-logo">💬</div>
+      <h1>আপনার মতামত জানান</h1>
+      <p>আপনার ফিডব্যাক অ্যাপ উন্নত করতে সাহায্য করে</p>
+    </div>
+
+    <div class="page-card">
+      <form class="feedback-form" onsubmit="submitFeedback(event)">
+        <div class="form-group">
+          <label>ফিডব্যাকের ধরন</label>
+          <select id="fbType" required>
+            <option value="feedback">💡 মতামত / পরামর্শ</option>
+            <option value="bug">🐛 বাগ রিপোর্ট</option>
+            <option value="feature">✨ নতুন ফিচার অনুরোধ</option>
+            <option value="other">📝 অন্যান্য</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>আপনার নাম (ঐচ্ছিক)</label>
+          <input type="text" id="fbName" placeholder="নাম লিখুন" maxlength="50">
+        </div>
+        <div class="form-group">
+          <label>ইমেইল (ঐচ্ছিক)</label>
+          <input type="email" id="fbEmail" placeholder="you@example.com" maxlength="80">
+        </div>
+        <div class="form-group">
+          <label>বিস্তারিত <span style="color:#DC2626;">*</span></label>
+          <textarea id="fbMessage" placeholder="বিস্তারিত লিখুন..." maxlength="1000" required></textarea>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
+            <span id="fbCharCount">০</span> / ১০০০ অক্ষর
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">
+          📤 ফিডব্যাক পাঠান
+        </button>
+      </form>
+    </div>
+
+    <div class="page-card">
+      <h3>📧 সরাসরি মেইল</h3>
+      <p>আপনি চাইলে সরাসরি মেইলও করতে পারেন:</p>
+      <p style="margin-top:8px;"><a href="mailto:nishatbadhon117@gmail.com" style="color:var(--primary-light); font-weight:600;">feedback</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/storage.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(getTheme());
+    const msg = document.getElementById('fbMessage');
+    const count = document.getElementById('fbCharCount');
+    if (msg && count) {
+      msg.addEventListener('input', () => {
+        count.textContent = toBn(msg.value.length);
+      });
+    }
+  });
+
+  function submitFeedback(e) {
+    e.preventDefault();
+    const type = document.getElementById('fbType').value;
+    const name = document.getElementById('fbName').value.trim();
+    const email = document.getElementById('fbEmail').value.trim();
+    const message = document.getElementById('fbMessage').value.trim();
+
+    if (!message) {
+      showToast('বিস্তারিত লিখুন', 'error');
+      return;
+    }
+
+    const typeLabels = {
+      feedback: 'মতামত',
+      bug: 'বাগ রিপোর্ট',
+      feature: 'ফিচার অনুরোধ',
+      other: 'অন্যান্য'
+    };
+
+    const subject = encodeURIComponent(`[লিখিপাতা] ${typeLabels[type]} - ${name || 'Anonymous'}`);
+    const body = encodeURIComponent(
+      `ধরন: ${typeLabels[type]}\n` +
+      `নাম: ${name || '—'}\n` +
+      `ইমেইল: ${email || '—'}\n\n` +
+      `বার্তা:\n${message}\n\n` +
+      `---\nApp: আমার খাতা v1.0\nDate: ${new Date().toLocaleString('bn-BD')}`
+    );
+
+    window.location.href = `mailto:feedback@amarkhata.app?subject=${subject}&body=${body}`;
+    showToast('মেইল অ্যাপ খোলা হচ্ছে...', 'success');
+  }
+</script>
+</body>
+</html>

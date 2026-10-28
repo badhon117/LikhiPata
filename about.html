@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1E3A8A">
+<title>অ্যাপ সম্পর্কে — লিখিপাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <h1>অ্যাপ সম্পর্কে</h1>
+  </div>
+  <div class="screen">
+    <div class="page-header">
+      <div class="page-logo">📚</div>
+      <h1>লিখিপাতা</h1>
+      <p>আপনার নিজের ডেটা, আপনার নিজের নিয়মে</p>
+      <div class="version-badge">সংস্করণ ১.০</div>
+    </div>
+
+    <div class="page-card">
+      <h3>📖 অ্যাপটি কী?</h3>
+      <p>"লিখিপাতা" একটি সম্পূর্ণ অফলাইন, কাস্টমাইজেবল ডেটাবেস ও ফর্ম বিল্ডার অ্যাপ্লিকেশন। আপনি নিজের ইচ্ছেমতো <b>বুক</b> তৈরি করতে পারবেন, তাতে <b>ফিল্ড</b> যোগ করতে পারবেন, এবং <b>ফর্মুলা</b> দিয়ে অটো-হিসাব করতে পারবেন — কোনো কোডিং না জেনেই।</p>
+    </div>
+
+    <div class="page-card">
+      <h3>✨ কী কী করতে পারবেন?</h3>
+      <ul>
+        <li>📚 নিজের বুক তৈরি (হিসাব, ট্র্যাকার, লিস্ট)</li>
+        <li>📝 ৬ ধরনের ফিল্ড: টেক্সট, নাম্বার, তারিখ, ড্রপডাউন, চেকবক্স, ফর্মুলা</li>
+        <li>🧮 ফর্মুলা দিয়ে অটো হিসাব</li>
+        <li>📊 Google Sheets-এর মতো টেবিল ভিউ</li>
+        <li>🔍 সার্চ, ফিল্টার, সর্ট</li>
+        <li>📥 CSV / PDF এক্সপোর্ট</li>
+        <li>💾 ব্যাকআপ ও রিস্টোর</li>
+        <li>☁️ Google Drive সিঙ্ক</li>
+        <li>🎨 লাইট, ডার্ক, AMOLED থিম</li>
+        <li>📱 PWA — মোবাইলে ইনস্টলযোগ্য</li>
+      </ul>
+    </div>
+
+    <div class="page-card">
+      <h3>🔒 ডেটা নিরাপত্তা</h3>
+      <p>আপনার সব ডেটা আপনার নিজের ফোনের ব্রাউজারের <b>LocalStorage</b>-এ সেভ থাকে। কোনো সার্ভারে পাঠানো হয় না, কোনো ট্র্যাকিং নেই। ইন্টারনেট ছাড়াই সম্পূর্ণ কাজ করে।</p>
+    </div>
+
+    <div class="page-card">
+      <h3>💡 ফর্মুলার উদাহরণ</h3>
+      <ul>
+        <li><code>আয় + বোনাস</code> → মোট আয়</li>
+        <li><code>(মূল্য * পরিমাণ) - ডিসকাউন্ট</code> → নেট মূল্য</li>
+        <li><code>মোট * 10 / 100</code> → ১০% কর</li>
+        <li><code>sum(আয়, বোনাস, অন্যান্য)</code> → একাধিক যোগ</li>
+      </ul>
+    </div>
+
+    <div class="page-card">
+      <h3>📱 ইনস্টল করুন</h3>
+      <p>Chrome/Safari-তে "Add to Home Screen" ক্লিক করে হোম স্ক্রিনে যোগ করুন। তারপর ইন্টারনেট ছাড়াই ব্যবহার করুন।</p>
+    </div>
+
+    <div class="thank-you">"ধন্যবাদ অ্যাপটি ব্যবহার করার জন্য! ❤️"</div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/storage.js"></script>
+<script>document.addEventListener('DOMContentLoaded', () => applyTheme(getTheme()));</script>
+</body>
+</html>

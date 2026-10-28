@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1E3A8A">
+<title>লিখিপাতা — হোম</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- ========== SPLASH ========== -->
+<!-- ========== SPLASH ========== -->
+<div id="splashScreen">
+  <div class="splash-inner">
+    <div class="splash-logo-box">
+      <img src="logo-192.png" alt="লিখিপাতা" onerror="this.style.display='none'; this.parentElement.innerHTML='📚'; this.parentElement.style.fontSize='52px';">
+    </div>
+    <h1 class="splash-title">লিখিপাতা</h1>
+    <p class="splash-subtitle">আপনার দৈনন্দিন হিসাব</p>
+    <div class="splash-actions">
+      <button id="splashDriveBtn" class="btn-splash-google" onclick="signInToGoogle()">
+        <!-- SVG Google Icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Google দিয়ে লগইন করুন
+      </button>
+      <button class="btn-splash-skip" onclick="skipSplash()">
+        লগইন ছাড়া চালিয়ে যান →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app">
+  <div class="header">
+    <h1>📚 লিখিপাতা</h1>
+    <button class="header-icon-btn" onclick="openMenu()" title="মেনু">⋮</button>
+  </div>
+
+  <div class="screen">
+    <!-- Hero -->
+    <div class="dashboard-hero">
+      <h2>স্বাগতম!</h2>
+      <p>আপনার নিজের বুক ও ফর্ম তৈরি করুন</p>
+      <div class="dashboard-stats">
+        <div class="dash-stat">
+          <div class="num" id="statBooks">০</div>
+          <div class="lbl">বুক</div>
+        </div>
+        <div class="dash-stat">
+          <div class="num" id="statEntries">০</div>
+          <div class="lbl">মোট এন্ট্রি</div>
+        </div>
+      </div>
+      <button class="btn-create-book" onclick="openCreateBookModal()">
+        <span>➕</span> নতুন বুক তৈরি করুন
+      </button>
+    </div>
+
+    <!-- Books Section -->
+    <div class="books-section">
+      <div class="section-title-wrap">
+        <h3>📖 আপনার বুকগুলো</h3>
+        <span class="count-badge" id="bookCount">০টি</span>
+      </div>
+      <div class="books-list" id="booksList"></div>
+      <div class="empty-state" id="emptyState">
+        <div class="icon">📖</div>
+        <h3>এখনো কোনো বুক নেই</h3>
+        <p>উপরের "নতুন বুক তৈরি করুন" বাটনে ক্লিক করে আপনার প্রথম বুক তৈরি করুন!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openCreateBookModal()" title="নতুন বুক">+</button>
+
+<!-- ========== BOOK MODAL ========== -->
+<div class="modal-overlay" id="bookModal" onclick="if(event.target===this) closeBookModal()">
+  <div class="modal-content">
+    <h3>
+      <span id="bookModalTitle">নতুন বুক তৈরি করুন</span>
+      <button class="close-x" onclick="closeBookModal()">✕</button>
+    </h3>
+    <div class="form-group">
+      <label>বুকের নাম <span class="req">*</span></label>
+      <input type="text" id="bookNameInput" placeholder="যেমন: আমার ব্যবসা, হোমওয়ার্ক ট্র্যাকার..." maxlength="50">
+    </div>
+    <div class="form-group">
+      <label>আইকন (ইমোজি)</label>
+      <input type="text" id="bookIconInput" placeholder="📘" maxlength="4" style="font-size:24px; text-align:center;">
+    </div>
+    <div class="form-group">
+      <label>রঙ</label>
+      <input type="hidden" id="bookColorInput" value="linear-gradient(135deg,#DBEAFE,#BFDBFE)">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="color-option" data-color="linear-gradient(135deg,#DBEAFE,#BFDBFE)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#DBEAFE,#BFDBFE); cursor:pointer; border:3px solid transparent;"></div>
+        <div class="color-option" data-color="linear-gradient(135deg,#D1FAE5,#A7F3D0)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#D1FAE5,#A7F3D0); cursor:pointer; border:3px solid transparent;"></div>
+        <div class="color-option" data-color="linear-gradient(135deg,#FEF3C7,#FDE68A)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); cursor:pointer; border:3px solid transparent;"></div>
+        <div class="color-option" data-color="linear-gradient(135deg,#FCE7F3,#FBCFE8)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#FCE7F3,#FBCFE8); cursor:pointer; border:3px solid transparent;"></div>
+        <div class="color-option" data-color="linear-gradient(135deg,#E0E7FF,#C7D2FE)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#E0E7FF,#C7D2FE); cursor:pointer; border:3px solid transparent;"></div>
+        <div class="color-option" data-color="linear-gradient(135deg,#FEE2E2,#FECACA)" onclick="selectColor(this.dataset.color)" style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#FEE2E2,#FECACA); cursor:pointer; border:3px solid transparent;"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeBookModal()">বাতিল</button>
+      <button class="btn btn-save" onclick="saveBook()">সেভ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PRO MENU PANEL ========== -->
+<div class="modal-overlay" id="menuOverlay" onclick="if(event.target===this) closeMenu()"></div>
+<div id="menuPanel">
+  <div class="menu-header">
+    <div class="menu-header-top">
+      <h3>মেনু</h3>
+      <button class="menu-close-btn" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-app-info">
+      <div class="menu-app-icon">📚</div>
+      <div class="menu-app-text">
+        <h4>লিখিপাতা</h4>
+        <p>সংস্করণ ১.০ • অফলাইন</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-body">
+    <div class="menu-section">
+      <div class="menu-section-label">ব্যক্তিগতকরণ</div>
+      <button class="menu-card-item" onclick="openThemeModal()">
+        <div class="menu-item-icon theme">🎨</div>
+        <div class="menu-item-text">
+          <strong>থিম পরিবর্তন</strong>
+          <small>লাইট, ডার্ক, AMOLED</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-label">ব্যাকআপ ও সিঙ্ক</div>
+      <!-- Google Drive Card -->
+      <div class="drive-card">
+        <div class="drive-card-head">
+          <div class="drive-icon">☁️</div>
+          <div class="drive-text">
+            <h4>গুগল ড্রাইভ সিঙ্ক</h4>
+            <p id="driveMenuStatus">❌ সংযুক্ত নয়</p>
+          </div>
+        </div>
+        <div class="drive-card-actions">
+          <button id="driveConnectBtn" class="drive-btn-connect" onclick="signInToGoogle()">কানেক্ট</button>
+          <button id="driveDisconnectBtn" class="drive-btn-disconnect" onclick="signOutFromGoogle()" style="display:none;">ডিসকানেক্ট</button>
+        </div>
+        <div class="drive-card-actions">
+          <button id="driveSyncNowBtn" class="drive-btn-sync" onclick="forceSyncNow()" style="display:none;">এখনই সিঙ্ক</button>
+          <button id="driveRestoreBtn" class="drive-btn-restore" onclick="downloadFromDrive()" style="display:none;">রিস্টোর</button>
+        </div>
+      </div>
+
+      <button class="menu-card-item" onclick="downloadBackup()">
+        <div class="menu-item-icon backup">💾</div>
+        <div class="menu-item-text">
+          <strong>ব্যাকআপ ডাউনলোড</strong>
+          <small>সব ডেটা JSON ফাইলে সেভ</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <button class="menu-card-item" onclick="triggerRestore()">
+        <div class="menu-item-icon restore">📂</div>
+        <div class="menu-item-text">
+          <strong>ব্যাকআপ রিস্টোর</strong>
+          <small>ফাইল থেকে ডেটা ফিরিয়ে আনুন</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-label">ডেটা ম্যানেজমেন্ট</div>
+      <button class="menu-card-item" onclick="closeMenu(); window.location.href='recycle-bin.html'">
+        <div class="menu-item-icon trash">🗑️</div>
+        <div class="menu-item-text">
+          <strong>রিসাইকেল বিন</strong>
+          <small>ডিলিট করা বুক ও এন্ট্রি</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-section-label">সাহায্য ও তথ্য</div>
+      <button class="menu-card-item" onclick="closeMenu(); window.location.href='feedback.html'">
+        <div class="menu-item-icon feedback">💬</div>
+        <div class="menu-item-text">
+          <strong>ফিডব্যাক পাঠান</strong>
+          <small>মতামত বা সমস্যা জানান</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <button class="menu-card-item" onclick="closeMenu(); window.location.href='about.html'">
+        <div class="menu-item-icon about">ℹ️</div>
+        <div class="menu-item-text">
+          <strong>অ্যাপ সম্পর্কে</strong>
+          <small>ফিচার ও তথ্য</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <button class="menu-card-item" onclick="closeMenu(); window.location.href='changelog.html'">
+        <div class="menu-item-icon credits">📝</div>
+        <div class="menu-item-text">
+          <strong>চেঞ্জলগ</strong>
+          <small>কী কী নতুন এসেছে</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+      <button class="menu-card-item" onclick="closeMenu(); window.location.href='credits.html'">
+        <div class="menu-item-icon credits">❤️</div>
+        <div class="menu-item-text">
+          <strong>ক্রেডিট</strong>
+          <small>যাঁদের অবদান</small>
+        </div>
+        <span class="menu-item-arrow">›</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu-footer">
+    লিখিপাতা • সংস্করণ ১.০ • Made with ❤️
+  </div>
+</div>
+
+<!-- ========== THEME MODAL ========== -->
+<div class="modal-overlay" id="themeModal" onclick="if(event.target===this) closeThemeModal()">
+  <div class="modal-content">
+    <h3>
+      <span>🎨 থিম পরিবর্তন</span>
+      <button class="close-x" onclick="closeThemeModal()">✕</button>
+    </h3>
+    <div class="theme-grid">
+      <button class="theme-choice" data-theme="light" onclick="setThemeAndClose('light')">
+        <span class="icon">☀️</span>
+        <span class="name">লাইট</span>
+      </button>
+      <button class="theme-choice" data-theme="dark" onclick="setThemeAndClose('dark')">
+        <span class="icon">🌙</span>
+        <span class="name">ডার্ক</span>
+      </button>
+      <button class="theme-choice" data-theme="amoled" onclick="setThemeAndClose('amoled')">
+        <span class="icon">🌑</span>
+        <span class="name">AMOLED</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;" onchange="handleRestoreFile(event)">
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/drive-sync.js"></script>
+</body>
+</html>

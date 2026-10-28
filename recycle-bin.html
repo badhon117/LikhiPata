@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0F172A">
+<title>রিসাইকেল বিন — লিখিপাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<style>
+  .recycle-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .recycle-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .recycle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-bottom: 1px dashed #E2E8F0;
+    padding-bottom: 10px;
+  }
+  .recycle-tag {
+    background: #FEE2E2;
+    color: #DC2626;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .recycle-tag.entry { background: #E0E7FF; color: #4338CA; }
+  .recycle-body { font-size: 14px; color: var(--text-main); margin-bottom: 16px; line-height: 1.6; }
+  .recycle-body strong { color: var(--primary); }
+  .recycle-actions { display: flex; gap: 10px; }
+  .recycle-actions button {
+    flex: 1; padding: 12px; border: none;
+    border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: 0.2s ease;
+  }
+  .btn-restore { background: #D1FAE5; color: #059669; }
+  .btn-restore:hover { background: #A7F3D0; }
+  .btn-permanent { background: #FEE2E2; color: #DC2626; }
+  .btn-permanent:hover { background: #FECACA; }
+  .empty-bin {
+    text-align: center; padding: 60px 20px; color: #94A3B8;
+    background: var(--bg-card); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .empty-bin .icon { font-size: 56px; margin-bottom: 14px; opacity: 0.5; }
+  .empty-bin p { font-size: 14px; }
+  .section-title {
+    font-size: 15px; font-weight: 700; color: var(--text-muted);
+    margin: 20px 4px 12px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .section-title .count {
+    background: rgba(220, 38, 38, 0.1); color: #DC2626;
+    padding: 2px 10px; border-radius: 20px; font-size: 12px;
+  }
+  body.dark-mode .recycle-card { border-color: #334155; }
+  body.dark-mode .recycle-header { border-color: #334155; }
+  body.amoled-mode .recycle-card { border-color: #333; }
+  body.amoled-mode .recycle-header { border-color: #333; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header" style="background: linear-gradient(135deg, #7F1D1D 0%, #DC2626 100%);">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <h1>🗑️ রিসাইকেল বিন</h1>
+    <button class="header-icon-btn" onclick="emptyBin()" title="সব মুছে ফেলুন" style="font-size: 16px;">🗑️</button>
+  </div>
+
+  <div class="screen">
+    <div style="text-align: center; margin-bottom: 20px; padding: 0 10px;">
+      <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6;">
+        এখানে ডিলিট করা বুক এবং এন্ট্রিগুলো জমা থাকে। আপনি চাইলে এগুলো <b>রিস্টোর</b> করতে পারেন অথবা <b>স্থায়ীভাবে মুছে ফেলতে</b> পারেন।
+      </p>
+    </div>
+
+    <div id="booksSection" style="display:none;">
+      <div class="section-title">
+        <span>📚 ডিলিট করা বুক</span>
+        <span class="count" id="booksCount">০টি</span>
+      </div>
+      <div id="trashedBooksList"></div>
+    </div>
+
+    <div id="entriesSection" style="display:none;">
+      <div class="section-title">
+        <span>📝 ডিলিট করা এন্ট্রি</span>
+        <span class="count" id="entriesCount">০টি</span>
+      </div>
+      <div id="trashedEntriesList"></div>
+    </div>
+
+    <div class="empty-bin" id="emptyBinState" style="display:none;">
+      <div class="icon">🎉</div>
+      <p>রিসাইকেল বিন খালি!</p>
+      <p style="font-size: 12.5px; margin-top: 5px;">এখানে কোনো ডিলিট করা ডেটা নেই।</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/storage.js"></script>
+<script>
+  let trashedBooks = [];
+  let trashedEntries = [];
+
+  function loadTrashData() {
+    trashedBooks = loadFromStorage('likhipata_trash_books', []);
+    trashedEntries = loadFromStorage('likhipata_trash_entries', []);
+    renderLists();
+  }
+
+  function renderLists() {
+    const booksSection = document.getElementById('booksSection');
+    const entriesSection = document.getElementById('entriesSection');
+    const emptyState = document.getElementById('emptyBinState');
+
+    if (trashedBooks.length > 0) {
+      booksSection.style.display = 'block';
+      document.getElementById('booksCount').textContent = toBn(trashedBooks.length) + 'টি';
+      document.getElementById('trashedBooksList').innerHTML = trashedBooks.map(item => {
+        const entryCount = item.entries ? item.entries.length : 0;
+        const delDate = new Date(item.deletedAt).toLocaleString('bn-BD');
+        return `
+          <div class="recycle-card">
+            <div class="recycle-header">
+              <span class="recycle-tag">বুক</span>
+              <span>ডিলিট: ${delDate}</span>
+            </div>
+            <div class="recycle-body">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:24px;">${item.icon || '📘'}</span>
+                <div>
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                    ${toBn(entryCount)}টি এন্ট্রি ছিল
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="recycle-actions">
+              <button class="btn-restore" onclick="restoreBook('${item.id}')">↩️ রিস্টোর</button>
+              <button class="btn-permanent" onclick="permanentDeleteBookUI('${item.id}')">স্থায়ীভাবে মুছুন</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      booksSection.style.display = 'none';
+    }
+
+    if (trashedEntries.length > 0) {
+      entriesSection.style.display = 'block';
+      document.getElementById('entriesCount').textContent = toBn(trashedEntries.length) + 'টি';
+      document.getElementById('trashedEntriesList').innerHTML = trashedEntries.map(item => {
+        const delDate = new Date(item.deletedAt).toLocaleString('bn-BD');
+        let preview = '';
+        const keys = Object.keys(item).filter(k => !['id', 'bookId', 'deletedAt', 'createdAt', 'updatedAt'].includes(k));
+        if (keys.length > 0) {
+          preview = keys.slice(0, 2).map(k => {
+            let val = item[k];
+            if (typeof val === 'boolean') val = val ? 'হ্যাঁ' : 'না';
+            if (typeof val === 'number') val = toBn(val);
+            return `<span style="font-size:12px; color:var(--text-muted);">${escapeHtml(String(val).slice(0, 20))}</span>`;
+          }).join(' • ');
+        }
+
+        let bookName = '⚠️ অজানা বুক (রিস্টোর সম্ভব নয়)';
+        const parentBook = getBooks().find(b => b.id === item.bookId);
+        if (parentBook) bookName = parentBook.name;
+
+        return `
+          <div class="recycle-card">
+            <div class="recycle-header">
+              <span class="recycle-tag entry">এন্ট্রি</span>
+              <span>ডিলিট: ${delDate}</span>
+            </div>
+            <div class="recycle-body">
+              <div style="font-size:13px; margin-bottom:6px;">
+                <strong>বুক:</strong> ${escapeHtml(bookName)}
+              </div>
+              <div style="font-size:12.5px; color:var(--text-muted);">
+                ${preview || 'কোনো ডেটা নেই'}
+              </div>
+            </div>
+            <div class="recycle-actions">
+              <button class="btn-restore" onclick="restoreEntry('${item.id}')" ${!parentBook ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>↩️ রিস্টোর</button>
+              <button class="btn-permanent" onclick="permanentDeleteEntryUI('${item.id}')">স্থায়ীভাবে মুছুন</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      entriesSection.style.display = 'none';
+    }
+
+    if (trashedBooks.length === 0 && trashedEntries.length === 0) {
+      emptyState.style.display = 'block';
+    } else {
+      emptyState.style.display = 'none';
+    }
+  }
+
+  function restoreBook(id) {
+    if (!confirm('এই বুকটি এবং এর সব এন্ট্রি কি ফিরিয়ে আনতে চান?')) return;
+    if (restoreBookFromTrash(id)) {
+      showToast('বুক সফলভাবে রিস্টোর হয়েছে', 'success');
+      loadTrashData();
+    } else {
+      showToast('রিস্টোর করা যায়নি', 'error');
+    }
+  }
+
+  function permanentDeleteBookUI(id) {
+    if (!confirm('এটি স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফিরিয়ে আনা যাবে না!')) return;
+    if (permanentlyDeleteBook(id)) {
+      showToast('বুক স্থায়ীভাবে মুছে ফেলা হয়েছে', 'success');
+      loadTrashData();
+    } else {
+      showToast('মুছে ফেলা ব্যর্থ', 'error');
+    }
+  }
+
+  function restoreEntry(id) {
+    if (!confirm('এই এন্ট্রিটি কি ফিরিয়ে আনতে চান?')) return;
+    if (restoreEntryFromTrash(id)) {
+      showToast('এন্ট্রি সফলভাবে রিস্টোর হয়েছে', 'success');
+      loadTrashData();
+    } else {
+      showToast('রিস্টোর করা যায়নি — বুকটি হয়তো ডিলিট হয়ে গেছে', 'error');
+    }
+  }
+
+  function permanentDeleteEntryUI(id) {
+    if (!confirm('এটি স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফিরিয়ে আনা যাবে না!')) return;
+    if (permanentlyDeleteEntry(id)) {
+      showToast('এন্ট্রি স্থায়ীভাবে মুছে ফেলা হয়েছে', 'success');
+      loadTrashData();
+    } else {
+      showToast('মুছে ফেলা ব্যর্থ', 'error');
+    }
+  }
+
+  function emptyBin() {
+    if (trashedBooks.length === 0 && trashedEntries.length === 0) {
+      showToast('বিন আগে থেকেই খালি', 'error');
+      return;
+    }
+    if (!confirm('রিসাইকেল বিনের সব ডেটা স্থায়ীভাবে মুছে ফেলবেন?')) return;
+    emptyRecycleBin();
+    showToast('বিন খালি করা হয়েছে', 'success');
+    loadTrashData();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(getTheme());
+    loadTrashData();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0F172A">
+<title>এন্ট্রি ভিউ — লিখিপাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<!-- Premium Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/view.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <h1 id="pageTitle">লোড হচ্ছে...</h1>
+    <button class="header-icon-btn" onclick="openBuilder()" title="এডিট">✏️</button>
+  </div>
+
+  <div class="screen">
+    <!-- Print Header (Only visible when printing) -->
+    <div class="print-header" id="printHeader">
+      <h1 id="printTitle">লিখিপাতা</h1>
+      <p id="printDate"></p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="view-tabs">
+      <button class="view-tab active" id="tabForm" onclick="switchViewTab('form')">📝 ফর্ম</button>
+      <button class="view-tab" id="tabTable" onclick="switchViewTab('table')">📊 Statistics</button>
+    </div>
+
+    <!-- Form View -->
+    <div id="formView">
+      <div class="form-card">
+        <h2>
+          <span id="formTitle">নতুন এন্ট্রি</span>
+          <span class="edit-badge" id="editBadge" style="display:none;">এডিট</span>
+        </h2>
+        <div id="dynamicForm"></div>
+        
+        <!-- No Fields State -->
+        <div class="no-fields-state" id="noFieldsState" style="display:none;">
+          <div class="icon">📋</div>
+          <h3>কোনো ফিল্ড নেই</h3>
+          <p>এই বুকের জন্য এখনো কোনো ফিল্ড তৈরি করা হয়নি। আগে ফিল্ড তৈরি করুন।</p>
+          <button onclick="openBuilder()">ফিল্ড তৈরি করুন</button>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="btn-row" id="formBtnRow">
+          <button class="btn btn-save" onclick="saveEntry()">💾 সেভ করুন</button>
+          <button class="btn btn-cancel" onclick="cancelForm()">বাতিল</button>
+          <button class="btn btn-delete" id="deleteBtn" onclick="deleteCurrent()" style="display:none;">🗑️ ডিলিট</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="tableView" style="display:none;">
+      <!-- Statistics Summary -->
+      <div class="summary-strip" id="summaryStrip">
+        <!-- Dynamically populated by JS -->
+      </div>
+
+      <!-- Toolbar -->
+      <div class="table-toolbar">
+        <input type="text" class="table-search" id="tableSearch" placeholder="🔍 সার্চ করুন..." oninput="renderTable()">
+        
+        <div class="table-toolbar-row">
+          <button class="table-tool-btn" id="filterBtn" onclick="toggleFilterPanel()">🔽 ফিল্টার</button>
+          <button class="table-tool-btn" id="sortBtn" onclick="toggleSortPanel()">↕️ সর্ট</button>
+          <button class="table-tool-btn select" id="selectModeBtn" onclick="isSelectMode ? exitSelectMode() : enterSelectMode()">☑ Select</button>
+          <button class="table-tool-btn export" onclick="openExportSheet()">📥 এক্সপোর্ট</button>
+        </div>
+
+        <!-- Filter Panel -->
+                <!-- Filter Panel -->
+        <div class="filter-panel" id="filterPanel">
+          <label>তারিখ অনুযায়ী ফিল্টার</label>
+          <select id="filterDate" onchange="toggleDateRange(); renderTable();">
+            <option value="">সব</option>
+            <option value="today">আজ</option>
+            <option value="week">গত ৭ দিন</option>
+            <option value="month">এই মাস</option>
+            <option value="year">এই বছর</option>
+            <option value="custom">কাস্টম তারিখ রেঞ্জ</option>
+          </select>
+          
+          <!-- Date Range Inputs -->
+          <div id="dateRangeInputs" style="display: none; margin-top: 10px;">
+            <label style="margin-top: 10px;">শুরুর তারিখ</label>
+            <input type="date" id="filterStartDate" onchange="renderTable()">
+            <label style="margin-top: 10px;">শেষ তারিখ</label>
+            <input type="date" id="filterEndDate" onchange="renderTable()">
+          </div>
+        </div>
+
+        <!-- Sort Panel -->
+        <div class="filter-panel" id="sortPanel">
+          <label>সাজান</label>
+          <select id="sortBy" onchange="renderTable()">
+            <option value="newest">নতুন আগে</option>
+            <option value="oldest">পুরোনো আগে</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Selection Bar -->
+      <div class="selection-bar" id="selectionBar">
+        <span class="count" id="selCount">০টি নির্বাচিত</span>
+        <button onclick="toggleSelectAll()">সব সিলেক্ট</button>
+        <button class="danger" onclick="deleteSelected()">ডিলিট</button>
+      </div>
+
+      <!-- Table -->
+      <div class="view-table-card">
+        <div class="view-table-wrap">
+          <table class="view-table">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="table-empty" id="tableEmpty" style="display:none;">
+          <div class="icon">📭</div>
+          <p>কোনো ডেটা নেই</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Sheet -->
+<div class="sheet-overlay" id="exportOverlay" onclick="closeExportSheet()"></div>
+<div class="bottom-sheet" id="exportSheet">
+  <div class="sheet-drag"></div>
+  <div class="sheet-title">এক্সপোর্ট ফরম্যাট নির্বাচন করুন</div>
+  <div class="sheet-options">
+    <button class="sheet-btn" onclick="exportCSV()">
+      <span class="icon">📄</span>
+      <span class="text">CSV</span>
+    </button>
+    <button class="sheet-btn" onclick="exportPDF()">
+      <span class="icon">🖨️</span>
+      <span class="text">PDF / প্রিন্ট</span>
+    </button>
+  </div>
+  <button class="sheet-cancel" onclick="closeExportSheet()">বাতিল</button>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this) closeDeleteModal()">
+  <div class="modal-content">
+    <h3>
+      <span>⚠️ ডিলিট নিশ্চিতকরণ</span>
+      <button class="close-x" onclick="closeDeleteModal()">✕</button>
+    </h3>
+    <p id="deleteMessage" style="font-size:14.5px; color:#475569; line-height:1.6; margin-bottom:20px;">এই এন্ট্রিটি ডিলিট করবেন?</p>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeDeleteModal()">বাতিল</button>
+      <button class="btn btn-delete" onclick="confirmDelete()">হ্যাঁ, ডিলিট</button>
+    </div>
+  </div>
+</div>
+<!-- FAB (Floating Action Button) for adding new entry -->
+<button class="fab-add-entry" id="fabAddEntry" onclick="cancelForm(); switchViewTab('form')" title="নতুন এন্ট্রি">
+  <span>+</span>
+</button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/formula-engine.js"></script>
+<script src="js/view.js"></script>
+</body>
+</html>

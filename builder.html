@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0F172A">
+<title>ফর্ম বিল্ডার — লিখিপাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<!-- Premium Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/builder.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">←</button>
+    <h1>ফর্ম বিল্ডার</h1>
+    <button class="header-icon-btn" onclick="openPreview()" title="প্রিভিউ">👁️</button>
+  </div>
+
+  <div class="screen">
+    <div class="builder-intro">
+      <p>
+        <strong>💡 ফর্ম বিল্ডার:</strong> এখানে আপনি আপনার বুকের ফিল্ডগুলো তৈরি করবেন। 
+        <b>টেক্সট</b>, <b>নাম্বার</b>, <b>তারিখ</b>, <b>ড্রপডাউন</b> বা <b>ফর্মুলা</b> ফিল্ড যোগ করতে পারবেন। 
+        ফর্মুলা দিয়ে অটো-হিসাব করতে পারবেন (যেমন: <code>মোট = মূল্য + কর</code>)।
+      </p>
+    </div>
+
+    <!-- Book Info -->
+    <div class="book-info-card">
+      <div class="bi-icon" id="bookIcon">📘</div>
+      <div class="bi-info">
+        <h3 id="bookName">বুকের নাম</h3>
+        <p id="bookMeta">শূন্য ফিল্ড</p>
+      </div>
+    </div>
+
+    <!-- Fields Section -->
+    <div class="fields-section-title">
+      <span>ফিল্ড সমূহ</span>
+      <span class="count-badge" id="fieldCount">০টি</span>
+    </div>
+
+    <div class="fields-list" id="fieldsList"></div>
+
+    <button class="btn-add-field" onclick="openFieldModal()">
+      <span>➕</span> নতুন ফিল্ড যোগ করুন
+    </button>
+
+    <!-- Empty state Fields -->
+    <div class="empty-state" id="fieldsEmpty" style="display:none; margin-bottom: 20px;">
+      <div class="icon">📋</div>
+      <h3>এখনো কোনো ফিল্ড নেই</h3>
+      <p>"নতুন ফিল্ড যোগ করুন" বাটনে ক্লিক করে শুরু করুন</p>
+    </div>
+
+    <!-- ========== SUMMARY CARDS SECTION ========== -->
+    <div class="fields-section-title" style="margin-top: 30px;">
+      <span>Statistics সামারি কার্ড সমূহ</span>
+      <span class="count-badge" id="summaryCount">০টি</span>
+    </div>
+
+    <div class="fields-list" id="summaryList"></div>
+
+    <button class="btn-add-field" onclick="openSummaryModal()" style="border-color: #FDE68A; color: #92400E;">
+      <span>➕</span> নতুন সামারি কার্ড যোগ করুন
+    </button>
+  </div>
+
+  <!-- Save Bar -->
+  <div class="save-bar">
+    <button class="btn btn-cancel" onclick="goBack()">বাতিল</button>
+    <button class="btn btn-primary" onclick="saveBookFields()">💾 সেভ করুন</button>
+  </div>
+</div>
+
+<!-- ========== FIELD MODAL ========== -->
+<div class="modal-overlay" id="fieldModal" onclick="if(event.target===this) closeFieldModal()">
+  <div class="modal-content">
+    <h3>
+      <span id="fieldModalTitle">নতুন ফিল্ড</span>
+      <button class="close-x" onclick="closeFieldModal()">✕</button>
+    </h3>
+
+    <!-- Type Selector -->
+    <div class="form-group">
+      <label>ফিল্ডের ধরন <span class="req">*</span></label>
+      <div class="field-type-grid" id="fieldTypeGrid">
+        <button class="field-type-card" data-type="text" onclick="selectFieldType('text')">
+          <span class="icon">📝</span>
+          <span class="name">টেক্সট</span>
+        </button>
+        <button class="field-type-card" data-type="number" onclick="selectFieldType('number')">
+          <span class="icon">🔢</span>
+          <span class="name">নাম্বার</span>
+        </button>
+        <button class="field-type-card" data-type="date" onclick="selectFieldType('date')">
+          <span class="icon">📅</span>
+          <span class="name">তারিখ</span>
+        </button>
+        <button class="field-type-card" data-type="dropdown" onclick="selectFieldType('dropdown')">
+          <span class="icon">📋</span>
+          <span class="name">ড্রপডাউন</span>
+        </button>
+        <button class="field-type-card" data-type="checkbox" onclick="selectFieldType('checkbox')">
+          <span class="icon">☑️</span>
+          <span class="name">চেকবক্স</span>
+        </button>
+        <button class="field-type-card" data-type="formula" onclick="selectFieldType('formula')">
+          <span class="icon">🧮</span>
+          <span class="name">ফর্মুলা</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Field Label -->
+    <div class="form-group">
+      <label>ফিল্ডের নাম <span class="req">*</span></label>
+      <input type="text" id="fieldLabel" placeholder="যেমন: পরিমাণ, তারিখ, নাম..." maxlength="40">
+    </div>
+
+    <!-- Dropdown Options -->
+    <div class="form-group" id="dropdownOptionsGroup" style="display:none;">
+      <label>ড্রপডাউন অপশন</label>
+      <textarea id="dropdownOptions" placeholder="প্রতি লাইনে একটি অপশন&#10;যেমন:&#10;বাজার&#10;বিল&#10;যাতায়াত"></textarea>
+      <div style="font-size:11.5px; color:#64748B; margin-top:5px;">প্রতি লাইনে একটি অপশন দিন</div>
+    </div>
+
+    <!-- Formula Builder -->
+
+<div class="form-group" id="formulaGroup" style="display:none;">
+  <label>ফর্মুলা তৈরি করুন</label>
+  <div class="formula-builder">
+    <!-- ভ্যারিয়েবল বাটনগুলো এখানে JS দিয়ে বসবে -->
+    <div class="formula-input-row" id="formulaVars"></div>
+
+    <!-- ফর্মুলা ডিসপ্লে -->
+    <div class="formula-display empty" id="formulaDisplay">এখানে ফর্মুলা দেখাবে...</div>
+
+    <!-- অপারেটর বাটন -->
+    <div class="formula-input-row" id="formulaOps">
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken('(')">(</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken(')')">)</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken(',')" style="font-weight: 900;">,</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken('+')">+</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken('-')">−</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken('*')">×</button>
+      <button type="button" class="formula-op-btn" onclick="addFormulaToken('/')">÷</button>
+      <button type="button" class="formula-op-btn" onclick="clearFormula()" style="color:#DC2626;" title="মুছুন">⌫</button>
+    </div>
+
+    <!-- প্রিভিউ -->
+    <div class="formula-preview" id="formulaPreview" style="display:none;"></div>
+  </div>
+</div>
+
+    <!-- Default Value -->
+    <div class="form-group" id="defaultValueGroup">
+      <label>ডিফল্ট মান <span class="opt">(ঐচ্ছিক)</span></label>
+      <input type="text" id="fieldDefault" placeholder="খালি রাখলে কিছুই বসবে না">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeFieldModal()">বাতিল</button>
+      <button class="btn btn-save" onclick="saveField()">যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SUMMARY MODAL ========== -->
+<div class="modal-overlay" id="summaryModal" onclick="if(event.target===this) closeSummaryModal()">
+  <div class="modal-content">
+    <h3>
+      <span id="summaryModalTitle">নতুন সামারি কার্ড</span>
+      <button class="close-x" onclick="closeSummaryModal()">✕</button>
+    </h3>
+
+    <div class="form-group">
+      <label>কার্ডের নাম <span class="req">*</span></label>
+      <input type="text" id="summaryLabel" placeholder="যেমন: মোট খরচ, সর্বোচ্চ মূল্য..." maxlength="30">
+    </div>
+
+    <div class="form-group">
+      <label>কোন ফিল্ডের উপর হিসাব হবে? <span class="req">*</span></label>
+      <select id="summaryTargetField"></select>
+    </div>
+
+    <div class="form-group">
+      <label>হিসাবের ধরন <span class="req">*</span></label>
+      <select id="summaryCalcType">
+        <option value="sum">যোগফল (Sum)</option>
+        <option value="count">মোট সংখ্যা (Count)</option>
+        <option value="avg">গড় (Average)</option>
+        <option value="max">সর্বোচ্চ (Max)</option>
+        <option value="min">সর্বনিম্ন (Min)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>কার্ডের রঙ</label>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="color" id="summaryColor" value="#1E3A8A" style="width: 50px; height: 40px; padding: 4px; border-radius: 8px; border: 1.5px solid #CBD5E1; cursor: pointer;">
+        <span style="font-size: 13.5px; color: #64748B;">কার্ডের ব্যাকগ্রাউন্ড কালার সিলেক্ট করুন</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeSummaryModal()">বাতিল</button>
+      <button class="btn btn-save" onclick="saveSummaryCard()">যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PREVIEW MODAL ========== -->
+<div class="modal-overlay" id="previewModal" onclick="if(event.target===this) closePreview()">
+  <div class="modal-content">
+    <h3>
+      <span>👁️ ফর্ম প্রিভিউ</span>
+      <button class="close-x" onclick="closePreview()">✕</button>
+    </h3>
+    <div id="previewContent" style="max-height:60vh; overflow-y:auto;">
+      <!-- Dynamic preview -->
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closePreview()">বন্ধ করুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/common.js"></script>
+<script src="js/ui.js"></script> 
+<script src="js/storage.js"></script>
+<script src="js/formula-engine.js"></script>
+<script src="js/builder.js"></script>
+
+</body>
+</html>

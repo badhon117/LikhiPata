@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>চেঞ্জলগ — লিখিপাতা</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    <h1>📝 চেঞ্জলগ</h1>
+  </div>
+  <div class="screen">
+    <div class="page-header">
+      <div class="page-logo">📝</div>
+      <h1>সংস্করণ ইতিহাস</h1>
+      <p>কী কী পরিবর্তন হয়েছে</p>
+    </div>
+
+    <div class="page-card">
+      <div class="changelog-version">
+        <h4>🎉 সংস্করণ ১.০</h4>
+        <div class="changelog-date">মুক্তি: ২০২৬</div>
+        <ul>
+          <li>প্রথম স্থিতিশীল সংস্করণ</li>
+          <li>৬ ধরনের ফিল্ড (টেক্সট, নাম্বার, তারিখ, ড্রপডাউন, চেকবক্স, ফর্মুলা)</li>
+          <li>ফর্মুলা ইঞ্জিন (sum, avg, min, max)</li>
+          <li>লাইট / ডার্ক / AMOLED থিম</li>
+          <li>CSV / PDF এক্সপোর্ট</li>
+          <li>Google Drive সিঙ্ক</li>
+          <li>রিসাইকেল বিন</li>
+          <li>অটো-সেভ ড্রাফট</li>
+          <li>PWA অফলাইন সাপোর্ট</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="thank-you">"নতুন ফিচারের জন্য অপেক্ষা করুন!" ✨</div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/storage.js"></script>
+<script>document.addEventListener('DOMContentLoaded', () => applyTheme(getTheme()));</script>
+</body>
+</html>
