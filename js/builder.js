@@ -1,8 +1,10 @@
 /* ============================================================
-   আমার খাতা — Builder Logic (v3 Ultimate)
+   আমার খাতা — Builder Logic (v5 Ultimate — Hybrid Input)
    - এডিট বাটন কার্ডের ভেতরে
    - ফর্মুলা ভ্যারিয়েবল সিলেক্ট করলে হাইড হবে
    - ব্যাকস্পেস (⌫) একবারে ১টি টোকেন মুছবে
+   - ডিসপ্লেতে সরাসরি টাইপ করা যাবে (বাংলা কিবোর্ড সাপোর্ট)
+   - ভ্যারিয়েবল হারাবে না (Hybrid Token Sync)
    ============================================================ */
 
 let currentBook = null;
@@ -81,7 +83,6 @@ async function deleteField(idx) {
   const fieldKey = f.key;
   currentBook.fields.splice(idx, 1);
 
-  // অন্য ফর্মুলা থেকে এই ফিল্ডের রেফারেন্স সরাও
   currentBook.fields.forEach(other => {
     if (other.type === 'formula' && other.formula) {
       const esc = fieldKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -154,7 +155,6 @@ function renderFields() {
     } else {
       preview = t.label;
     }
-    // 👇 কার্ডের মূল অংশে ক্লিক করলে এডিট হবে
     return `
       <div class="field-card">
         <div style="display:flex; align-items:center; gap:14px; flex:1; cursor:pointer; min-width:0;" onclick="editField(${i})">
@@ -243,7 +243,7 @@ function selectFieldType(type) {
 
   if (type === 'formula') {
     renderFormulaBuilder();
-    updateFormulaDisplay();
+    updateFormulaDisplay(true);
   }
 }
 
@@ -260,7 +260,6 @@ function renderFormulaBuilder() {
     return;
   }
 
-  // 👇 প্রতিটি বাটনের id দিয়ে ট্র্যাক করব, যাতে সিলেক্ট হলে হাইড করা যায়
   varsContainer.innerHTML = usableFields.map(f => {
     const isUsed = formulaTokens.includes(f.key);
     return `
@@ -276,7 +275,6 @@ function renderFormulaBuilder() {
 }
 
 function refreshFormulaVarsVisibility() {
-  // ব্যবহারকারী ফর্মুলা থেকে ভ্যারিয়েবল মুছলে বাটনটি আবার দেখাবে
   document.querySelectorAll('#formulaVars .formula-var-btn').forEach(btn => {
     const k = btn.getAttribute('data-key');
     if (formulaTokens.includes(k)) {
@@ -293,20 +291,18 @@ function addFormulaVar(fieldKey) {
     formulaTokens.push(' ');
   }
   formulaTokens.push(fieldKey);
-  refreshFormulaVarsVisibility(); // 👈 সিলেক্ট হলে বাটন হাইড
-  updateFormulaDisplay();
+  refreshFormulaVarsVisibility();
+  updateFormulaDisplay(true);
 }
 
 function addFormulaToken(op) {
   formulaTokens.push(op);
-  updateFormulaDisplay();
+  updateFormulaDisplay(true);
 }
 
-// 👇 নতুন লজিক: শুধু শেষের টোকেনটি মুছে
 function removeLastFormulaToken() {
   if (formulaTokens.length === 0) return;
   
-  // শেষের টোকেনটি যদি স্পেস হয়, তবে সেটাসহ আগেরটিও মুছি
   let last = formulaTokens[formulaTokens.length - 1];
   formulaTokens.pop();
   if (last === ' ' && formulaTokens.length > 0) {
@@ -314,33 +310,49 @@ function removeLastFormulaToken() {
   }
   
   refreshFormulaVarsVisibility();
-  updateFormulaDisplay();
+  updateFormulaDisplay(true);
 }
 
-// 👇 সব ফর্মুলা মুছলে সব ভ্যারিয়েবল বাটন আবার দেখাবে
 function clearFormula() {
   const ok = confirm('সব ফর্মুলা মুছে ফেলবেন?');
   if (!ok) return;
   formulaTokens = [];
   refreshFormulaVarsVisibility();
-  updateFormulaDisplay();
+  updateFormulaDisplay(true);
 }
 
-function updateFormulaDisplay() {
+/* ============ Display Update ============ */
+/* 
+  forceRender = true মানে: কোড থেকে কল হচ্ছে — তাই ডিসপ্লের টেক্সট পুরোপুরি রি-রেন্ডার হবে।
+  forceRender = false মানে: ইউজার টাইপ করছে — তাই শুধু প্রিভিউ আপডেট হবে, টেক্সট ছোঁব না।
+*/
+function updateFormulaDisplay(forceRender = true) {
   const display = document.getElementById('formulaDisplay');
   const preview = document.getElementById('formulaPreview');
 
-  if (formulaTokens.length === 0) {
-    display.classList.add('empty');
-    display.textContent = 'এখানে ফর্মুলা দেখাবে...';
+  if (forceRender) {
+    if (formulaTokens.length === 0) {
+      display.classList.add('empty');
+      display.textContent = 'এখানে ফর্মুলা দেখাবে...';
+      preview.style.display = 'none';
+      return;
+    }
+
+    display.classList.remove('empty');
+    const raw = formulaTokens.join(' ');
+    const pretty = prettifyFormula(raw, currentBook.fields);
+    display.textContent = pretty;
+
+    // কার্সর শেষে আনতে
+    placeCaretAtEnd(display);
+  }
+
+  // প্রিভিউ আপডেট
+  const raw = formulaTokens.join(' ');
+  if (!raw || !raw.trim()) {
     preview.style.display = 'none';
     return;
   }
-
-  display.classList.remove('empty');
-  const raw = formulaTokens.join(' ');
-  const pretty = prettifyFormula(raw, currentBook.fields);
-  display.textContent = pretty;
 
   const context = {};
   currentBook.fields.forEach(f => { context[f.key] = 10; });
@@ -362,6 +374,127 @@ function updateFormulaDisplay() {
   } else {
     preview.className = 'formula-preview ok';
     preview.textContent = `✓ পরীক্ষামূলক ফলাফল: ${formatTaka(val)} (সব ফিল্ড = ১০ ধরলে)`;
+  }
+}
+
+/* ============ Direct Typing on Display (Hybrid) ============ */
+/* 
+  এই ফাংশনটি ইউজার ডিসপ্লেতে টাইপ করলে কল হবে।
+  এখানে আমরা ডিসপ্লের টেক্সটকে সরাসরি বিশ্বাস করি না; বরং
+  কী পরিবর্তন হয়েছে সেটা দেখে formulaTokens আপডেট করি।
+*/
+/* ============ Direct Typing on Display (Hybrid — Fixed) ============ */
+function handleDisplayInput(event) {
+  const display = document.getElementById('formulaDisplay');
+  const currentText = display.textContent || '';
+
+  // ১. বাংলা সংখ্যা (০-৯) -> ইংরেজি সংখ্যা (0-9)
+  let processed = bnToEn(currentText);
+
+  // ২. ফিল্ডের লেবেলগুলো একদম আগে খুঁজে বের করি (সেগুলো মুছব না)
+  const labels = currentBook.fields
+    .map(f => f.label ? f.label.trim() : '')
+    .filter(Boolean);
+  
+  // লম্বা লেবেল আগে রাখি (যাতে "মোট ইনকাম" আর "মোট" এর মধ্যে কনফ্লিক্ট না হয়)
+  labels.sort((a, b) => b.length - a.length);
+
+  // লেবেলগুলোকে সাময়িকভাবে একটি নিরাপদ টোকেন দিয়ে রিপ্লেস করি
+  const labelMap = {};
+  labels.forEach((lbl, idx) => {
+    const safe = `___LBL${idx}___`;
+    labelMap[safe] = lbl;
+    processed = processed.split(lbl).join(safe);
+  });
+
+  // ৩. এখন শুধু অনুমোদিত ক্যারেক্টার রাখি (সংখ্যা, অপারেটর, স্পেস, এবং আমাদের সেফ টোকেন)
+  processed = processed.replace(/[^0-9+\-*/%().,\s_A-Za-z]/g, '');
+
+  // ৪. সেফ টোকেনগুলো আবার আসল লেবেলে ফিরিয়ে আনি
+  Object.keys(labelMap).forEach(safe => {
+    processed = processed.split(safe).join(labelMap[safe]);
+  });
+
+  // ৫. ডিসপ্লে ফিক্স করি যদি কিছু পরিবর্তন হয়ে থাকে
+  if (processed !== currentText) {
+    display.textContent = processed;
+    placeCaretAtEnd(display);
+  }
+
+  // ৬. টোকেন পুনর্গঠন করি
+  formulaTokens = rebuildTokensFromDisplay(processed);
+
+  // ৭. ভ্যারিয়েবল বাটন আপডেট
+  refreshFormulaVarsVisibility();
+
+  // ৮. প্রিভিউ আপডেট (টেক্সট ছোঁব না)
+  updateFormulaDisplay(false);
+}
+
+function rebuildTokensFromDisplay(text) {
+  const tokens = [];
+  if (!text || !text.trim()) return tokens;
+
+  // লেবেল -> key ম্যাপ
+  const labelToKey = {};
+  currentBook.fields.forEach(f => {
+    if (f.label) labelToKey[f.label.trim()] = f.key;
+  });
+
+  const sortedLabels = Object.keys(labelToKey).sort((a, b) => b.length - a.length);
+
+  let i = 0;
+  const s = text;
+
+  while (i < s.length) {
+    const c = s[i];
+    
+    // স্পেস স্কিপ
+    if (/\s/.test(c)) { i++; continue; }
+
+    // অপারেটর
+    if ('+-*/%(),'.includes(c)) {
+      tokens.push(c);
+      i++;
+      continue;
+    }
+
+    // সংখ্যা (ইংরেজি - কারণ bnToEn আগেই হয়ে গেছে)
+    if (/[0-9.]/.test(c)) {
+      let num = '';
+      while (i < s.length && /[0-9.]/.test(s[i])) { num += s[i]; i++; }
+      tokens.push(num);
+      continue;
+    }
+
+    // লেবেল ম্যাচ (ভ্যারিয়েবল) - লম্বা লেবেল আগে
+    let matched = false;
+    for (const label of sortedLabels) {
+      if (s.substr(i, label.length) === label) {
+        tokens.push(labelToKey[label]);
+        i += label.length;
+        matched = true;
+        break;
+      }
+    }
+    if (matched) continue;
+
+    // অচেনা কিছু থাকলে স্কিপ
+    i++;
+  }
+
+  return tokens;
+}
+
+function placeCaretAtEnd(el) {
+  el.focus();
+  if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 }
 
@@ -400,8 +533,8 @@ function saveField() {
   }
 
   if (selectedFieldType === 'formula') {
-    const formulaStr = formulaTokens.join(' ');
-    if (!formulaStr.trim()) {
+    const formulaStr = formulaTokens.join(' ').trim();
+    if (!formulaStr) {
       showToast('ফর্মুলা তৈরি করুন', 'error');
       return;
     }
@@ -457,7 +590,6 @@ function renderSummaryCards() {
     const colorStr = c.color || '#1E3A8A';
     const iconBg = colorStr.includes('gradient') ? colorStr : `linear-gradient(135deg, ${colorStr}, ${colorStr})`;
 
-    // 👇 কার্ডের মূল অংশে ক্লিক করলে এডিট হবে
     return `
       <div class="field-card">
         <div style="display:flex; align-items:center; gap:14px; flex:1; cursor:pointer; min-width:0;" onclick="editSummaryCard(${i})">

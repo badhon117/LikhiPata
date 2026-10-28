@@ -164,14 +164,38 @@ function evalRPN(rpn, context) {
 }
 
 /* ============ মূল API ============ */
+/* ============ মূল API ============ */
 function calcFormula(expr, context = {}, fieldMap = {}) {
   if (!expr || typeof expr !== 'string') return 0;
   try {
-    const trimmed = expr.trim();
-    
-    // 👇 নতুন লজিক: % চিহ্নকে /100 এ রূপান্তর করা হচ্ছে (যেমন: 30% -> (30/100))
-    let processed = trimmed.replace(/([0-9a-zA-Z_\u0980-\u09FF.]+)\s*%/g, '($1/100)');
+    let processed = expr.trim();
 
+    // 👇 স্টেপ ১: মোবাইল ক্যালকুলেটরের মতো % লজিক (Smart Percentage)
+    // প্যাটার্ন ১: A + B%  বা  A - B%  (যেখানে A এবং B যেকোনো ভ্যারিয়েবল/সংখ্যা হতে পারে)
+    processed = processed.replace(
+      /([a-zA-Z0-9_\u0980-\u09FF.]+)\s*([+\-])\s*([a-zA-Z0-9_\u0980-\u09FF.]+)\s*%/g,
+      (match, base, op, percent) => {
+        // A + B%  =>  A + (A*B/100)
+        return `${base} ${op} (${base} * ${percent} / 100)`;
+      }
+    );
+
+    // প্যাটার্ন ২: A * B%  বা  A / B%  (কোনো যোগ-বিয়োগ নেই, শুধু গুণ-ভাগ)
+    processed = processed.replace(
+      /([a-zA-Z0-9_\u0980-\u09FF.]+)\s*([*/])\s*([a-zA-Z0-9_\u0980-\u09FF.]+)\s*%/g,
+      (match, base, op, percent) => {
+        // A * B%  =>  A * (B/100)
+        return `${base} ${op} (${percent} / 100)`;
+      }
+    );
+
+    // প্যাটার্ন ৩: শুধু অবশিষ্ট % থাকলে (যেমন: শুধু "30%") সেটাকে B/100 করে দিই
+    processed = processed.replace(
+      /([a-zA-Z0-9_\u0980-\u09FF.]+)\s*%/g,
+      (match, val) => `(${val} / 100)`
+    );
+
+    // 👇 স্টেপ ২: টোকেনাইজ এবং ক্যালকুলেট
     // সরাসরি ভ্যারিয়েবল?
     if (context[processed] !== undefined) {
       const val = parseFloat(context[processed]);
