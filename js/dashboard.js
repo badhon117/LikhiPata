@@ -130,10 +130,25 @@ function closeBookModal() {
 }
 
 function selectColor(color) {
+  // ১. হিডেন ইনপুটে কালার সেভ
   document.getElementById('bookColorInput').value = color;
+  
+  // ২. কন্টেইনারে সিলেক্টেড কালার হাইলাইট (.active ক্লাস)
   document.querySelectorAll('.color-option').forEach(el => {
     el.classList.toggle('active', el.dataset.color === color);
   });
+
+  // ৩. 👇 নতুন যোগ করা হয়েছে: আইকন বক্সের ব্যাকগ্রাউন্ড লাইভ আপডেট
+  const iconInput = document.getElementById('bookIconInput');
+  if (iconInput) {
+    // আইকন ইনপুট ফিল্ডের ব্যাকগ্রাউন্ড চেঞ্জ
+    iconInput.style.background = color;
+    iconInput.style.borderColor = 'transparent'; // বর্ডার হাইড করতে চাইলে
+    
+    // যদি আপনি চান আইকন ইনপুটের ভেতরে ইমোজি টেক্সট কালার সাদা হোক
+    // (সব রঙের জন্য নাও মানতে পারে, তবে সুন্দর দেখাবে)
+    iconInput.style.textShadow = '0 2px 4px rgba(0,0,0,0.2)';
+  }
 }
 
 function saveBook() {
