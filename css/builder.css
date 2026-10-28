@@ -283,7 +283,22 @@
   min-height: 44px;
   word-break: break-all;
   margin-bottom: 10px;
+  outline: none;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  caret-color: var(--primary-light);
 }
+.formula-display:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  background: white;
+}
+.formula-display.empty {
+  color: #94A3B8;
+  font-style: italic;
+}
+
 .formula-display.empty {
   color: #94A3B8;
   font-style: italic;
