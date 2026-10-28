@@ -1,5 +1,8 @@
 /* ============================================================
-   আমার খাতা — Builder Logic (Fully Fixed)
+   আমার খাতা — Builder Logic (v3 Ultimate)
+   - এডিট বাটন কার্ডের ভেতরে
+   - ফর্মুলা ভ্যারিয়েবল সিলেক্ট করলে হাইড হবে
+   - ব্যাকস্পেস (⌫) একবারে ১টি টোকেন মুছবে
    ============================================================ */
 
 let currentBook = null;
@@ -78,7 +81,7 @@ async function deleteField(idx) {
   const fieldKey = f.key;
   currentBook.fields.splice(idx, 1);
 
-  // 👇 নতুন লজিক: অন্য ফর্মুলা থেকে এই ফিল্ডের রেফারেন্স সরাও
+  // অন্য ফর্মুলা থেকে এই ফিল্ডের রেফারেন্স সরাও
   currentBook.fields.forEach(other => {
     if (other.type === 'formula' && other.formula) {
       const esc = fieldKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -151,17 +154,19 @@ function renderFields() {
     } else {
       preview = t.label;
     }
+    // 👇 কার্ডের মূল অংশে ক্লিক করলে এডিট হবে
     return `
       <div class="field-card">
-        <div class="field-icon ${t.cls}">${t.icon}</div>
-        <div class="field-info">
-          <h4>${escapeHtml(f.label)}</h4>
-          <p>${preview}</p>
+        <div style="display:flex; align-items:center; gap:14px; flex:1; cursor:pointer; min-width:0;" onclick="editField(${i})">
+          <div class="field-icon ${t.cls}">${t.icon}</div>
+          <div class="field-info">
+            <h4>${escapeHtml(f.label)}</h4>
+            <p>${preview}</p>
+          </div>
         </div>
-        <div class="field-actions">
+        <div class="field-actions" onclick="event.stopPropagation()">
           <button class="field-action-btn" onclick="moveField(${i}, -1)" title="উপরে">↑</button>
           <button class="field-action-btn" onclick="moveField(${i}, 1)" title="নিচে">↓</button>
-          <button class="field-action-btn" onclick="editField(${i})" title="এডিট">✏️</button>
           <button class="field-action-btn del" onclick="deleteField(${i})" title="ডিলিট">🗑️</button>
         </div>
       </div>
@@ -204,7 +209,6 @@ function openFieldModal(editIdx = -1) {
 }
 
 function parseFormulaToTokens(formulaStr) {
-  // অপারেটর ও ভ্যারিয়েবল আলাদা করি
   const tokens = [];
   let i = 0;
   const s = String(formulaStr);
@@ -212,7 +216,6 @@ function parseFormulaToTokens(formulaStr) {
     const c = s[i];
     if (/\s/.test(c)) { i++; continue; }
     if ('+-*/%(),'.includes(c)) { tokens.push(c); i++; continue; }
-    // ভ্যারিয়েবল / নাম
     let name = '';
     while (i < s.length && /[a-zA-Z0-9_\u0980-\u09FF]/.test(s[i])) { name += s[i]; i++; }
     if (name) tokens.push(name);
@@ -249,8 +252,7 @@ function renderFormulaBuilder() {
   const varsContainer = document.getElementById('formulaVars');
   const usableFields = currentBook.fields.filter((f, i) => {
     if (i === editingFieldIndex) return false;
-    // শুধু number ফিল্ড (formula বাদ) — text/date/dropdown ফর্মুলায় 0 হবে
-    return f.type === 'number';
+    return f.type === 'number' || f.type === 'formula';
   });
 
   if (usableFields.length === 0) {
@@ -258,20 +260,40 @@ function renderFormulaBuilder() {
     return;
   }
 
-  varsContainer.innerHTML = usableFields.map(f => `
-    <button class="formula-var-btn" onclick="addFormulaVar('${escapeAttr(f.key)}')">
-      ${escapeHtml(f.label)}
-    </button>
-  `).join('');
+  // 👇 প্রতিটি বাটনের id দিয়ে ট্র্যাক করব, যাতে সিলেক্ট হলে হাইড করা যায়
+  varsContainer.innerHTML = usableFields.map(f => {
+    const isUsed = formulaTokens.includes(f.key);
+    return `
+      <button 
+        class="formula-var-btn" 
+        data-key="${escapeAttr(f.key)}"
+        style="${isUsed ? 'display:none;' : ''}"
+        onclick="addFormulaVar('${escapeAttr(f.key)}')">
+        ${escapeHtml(f.label)}
+      </button>
+    `;
+  }).join('');
+}
+
+function refreshFormulaVarsVisibility() {
+  // ব্যবহারকারী ফর্মুলা থেকে ভ্যারিয়েবল মুছলে বাটনটি আবার দেখাবে
+  document.querySelectorAll('#formulaVars .formula-var-btn').forEach(btn => {
+    const k = btn.getAttribute('data-key');
+    if (formulaTokens.includes(k)) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = '';
+    }
+  });
 }
 
 function addFormulaVar(fieldKey) {
   const last = formulaTokens[formulaTokens.length - 1];
-  // যদি আগের টোকেনটি কোনো ভ্যারিয়েবল বা ')' হয়, তবে একটি স্পেস টোকেন ('' বা ' ') বসাই
   if (last && (last === ')' || /^[a-zA-Z0-9_\u0980-\u09FF]/.test(last))) {
     formulaTokens.push(' ');
   }
   formulaTokens.push(fieldKey);
+  refreshFormulaVarsVisibility(); // 👈 সিলেক্ট হলে বাটন হাইড
   updateFormulaDisplay();
 }
 
@@ -280,8 +302,27 @@ function addFormulaToken(op) {
   updateFormulaDisplay();
 }
 
+// 👇 নতুন লজিক: শুধু শেষের টোকেনটি মুছে
+function removeLastFormulaToken() {
+  if (formulaTokens.length === 0) return;
+  
+  // শেষের টোকেনটি যদি স্পেস হয়, তবে সেটাসহ আগেরটিও মুছি
+  let last = formulaTokens[formulaTokens.length - 1];
+  formulaTokens.pop();
+  if (last === ' ' && formulaTokens.length > 0) {
+    formulaTokens.pop();
+  }
+  
+  refreshFormulaVarsVisibility();
+  updateFormulaDisplay();
+}
+
+// 👇 সব ফর্মুলা মুছলে সব ভ্যারিয়েবল বাটন আবার দেখাবে
 function clearFormula() {
+  const ok = confirm('সব ফর্মুলা মুছে ফেলবেন?');
+  if (!ok) return;
   formulaTokens = [];
+  refreshFormulaVarsVisibility();
   updateFormulaDisplay();
 }
 
@@ -396,8 +437,6 @@ function editField(idx) {
   openFieldModal(idx);
 }
 
-
-
 /* ============ Summary Cards ============ */
 function renderSummaryCards() {
   const list = document.getElementById('summaryList');
@@ -415,20 +454,22 @@ function renderSummaryCards() {
     const fieldLabel = targetField ? targetField.label : '⚠️ অজানা ফিল্ড';
     const calcMap = { sum: 'যোগফল', count: 'সংখ্যা', avg: 'গড়', max: 'সর্বোচ্চ', min: 'সর্বনিম্ন' };
     const calcLabel = calcMap[c.calcType] || c.calcType;
-   const colorStr = c.color || '#1E3A8A';
-const iconBg = colorStr.includes('gradient') ? colorStr : `linear-gradient(135deg, ${colorStr}, ${colorStr})`;
+    const colorStr = c.color || '#1E3A8A';
+    const iconBg = colorStr.includes('gradient') ? colorStr : `linear-gradient(135deg, ${colorStr}, ${colorStr})`;
 
+    // 👇 কার্ডের মূল অংশে ক্লিক করলে এডিট হবে
     return `
       <div class="field-card">
-        <div class="field-icon" style="background: ${iconBg}; color: white;">📊</div>
-        <div class="field-info">
-          <h4>${escapeHtml(c.label)}</h4>
-          <p>${escapeHtml(fieldLabel)} এর ${calcLabel}</p>
+        <div style="display:flex; align-items:center; gap:14px; flex:1; cursor:pointer; min-width:0;" onclick="editSummaryCard(${i})">
+          <div class="field-icon" style="background: ${iconBg}; color: white;">📊</div>
+          <div class="field-info">
+            <h4>${escapeHtml(c.label)}</h4>
+            <p>${escapeHtml(fieldLabel)} এর ${calcLabel}</p>
+          </div>
         </div>
-        <div class="field-actions">
+        <div class="field-actions" onclick="event.stopPropagation()">
           <button class="field-action-btn" onclick="moveSummary(${i}, -1)" title="উপরে">↑</button>
           <button class="field-action-btn" onclick="moveSummary(${i}, 1)" title="নিচে">↓</button>
-          <button class="field-action-btn" onclick="editSummaryCard(${i})" title="এডিট">✏️</button>
           <button class="field-action-btn del" onclick="deleteSummaryCard(${i})" title="ডিলিট">🗑️</button>
         </div>
       </div>
@@ -440,15 +481,13 @@ function moveField(idx, dir) {
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= currentBook.fields.length) return;
   
-  // অ্যারে সোয়াপ করা হচ্ছে
   const temp = currentBook.fields[idx];
   currentBook.fields[idx] = currentBook.fields[newIdx];
   currentBook.fields[newIdx] = temp;
   
   markDirty();
-  renderFields(); // রি-রেন্ডার
+  renderFields();
   
-  // UI-তে স্ক্রল পজিশন ধরে রাখার জন্য (যাতে চোখ হারিয়ে না যায়)
   const cards = document.querySelectorAll('#fieldsList .field-card');
   if (cards[newIdx]) {
     cards[newIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -496,8 +535,6 @@ function openSummaryModal(editIdx = -1) {
     document.getElementById('summaryLabel').value = c.label;
     fieldSelect.value = c.fieldKey;
     document.getElementById('summaryCalcType').value = c.calcType;
-    // রঙ বের করি
-    // রঙ বের করি (null safety সহ)
     const colorMatch = c.color ? String(c.color).match(/#[0-9a-fA-F]{6}/) : null;
     document.getElementById('summaryColor').value = colorMatch ? colorMatch[0] : '#2563EB';
   } else {
@@ -559,8 +596,6 @@ function saveSummaryCard() {
 function editSummaryCard(idx) {
   openSummaryModal(idx);
 }
-
-
 
 function adjustColor(hex, percent) {
   try {
