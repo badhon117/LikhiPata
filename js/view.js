@@ -224,7 +224,7 @@ function renderForm() {
       }
     }
   }
-
+	attachEnterNavigation();
   recalcFormulas();
 }
 
@@ -855,4 +855,30 @@ function duplicateEntry(id) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
   showToast('এন্ট্রি কপি হয়েছে — প্রয়োজনে এডিট করে সেভ করুন', 'success');
+}
+
+/* ============ Enter Navigation ============ */
+function attachEnterNavigation() {
+  const allInputs = Array.from(
+    document.querySelectorAll('#dynamicForm input, #dynamicForm select, #dynamicForm textarea')
+  ).filter(el => !el.readOnly && el.type !== 'hidden');
+
+  allInputs.forEach((el, index) => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const nextField = allInputs[index + 1];
+        if (nextField) {
+          nextField.focus();
+          if (nextField.setSelectionRange && nextField.value) {
+            const len = nextField.value.length;
+            nextField.setSelectionRange(len, len);
+          }
+        } else {
+          const saveBtn = document.querySelector('.btn-save');
+          if (saveBtn) saveBtn.focus();
+        }
+      }
+    });
+  });
 }
